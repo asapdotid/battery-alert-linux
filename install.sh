@@ -137,120 +137,10 @@
         return
     }
 
-    battery_alert_input_battery_full() {
-        local alert_full
-        PS3="Please select enable full battery alert: "
-        select opt in Yes No; do
-            case $opt in
-            Yes)
-                alert_full=true
-                break
-                ;;
-            No)
-                alert_full=false
-                break
-                ;;
-            *)
-                echo "invalid option $REPLY"
-                ;;
-            esac
-        done
-        echo ${alert_full}
-    }
-
-    battery_alert_input_battery_empty() {
-        local alert_empty
-        PS3="Please select enable empty battery alert: "
-        select opt in Yes No; do
-            case $opt in
-            Yes)
-                alert_empty=true
-                break
-                ;;
-            No)
-                alert_empty=false
-                break
-                ;;
-            *)
-                echo "invalid option $REPLY"
-                ;;
-            esac
-        done
-        echo ${alert_empty}
-    }
-
-    battery_alert_input_battery_empty_threshold() {
-        local alert_empty_threshold
-        PS3="Please select empty battery threshold: "
-        select opt in 40 35 30 25 20; do
-            case $opt in
-            40)
-                alert_empty_threshold=40
-                break
-                ;;
-            35)
-                alert_empty_threshold=35
-                break
-                ;;
-            30)
-                alert_empty_threshold=30
-                break
-                ;;
-            25)
-                alert_empty_threshold=25
-                break
-                ;;
-            20)
-                alert_empty_threshold=20
-                break
-                ;;
-            *)
-                echo "invalid option $REPLY"
-                ;;
-            esac
-        done
-        echo ${alert_empty_threshold}
-    }
-
-    battery_alert_input_sound() {
-        local alert_sound
-        PS3="Please select enable sound alert: "
-        select opt in Yes No; do
-            case $opt in
-            Yes)
-                alert_sound=true
-                break
-                ;;
-            No)
-                alert_sound=false
-                break
-                ;;
-            *)
-                echo "invalid option $REPLY"
-                ;;
-            esac
-        done
-        echo ${alert_sound}
-    }
-
     set_battery_alert_config() {
         local INSTALL_DIR
         INSTALL_DIR="$(battery_alert_install_dir)"
-        local alert_full
-        alert_full="$(battery_alert_input_battery_full)"
-        local alert_empty
-        alert_empty="$(battery_alert_input_battery_empty)"
-        local alert_empty_threshold
-        alert_empty_threshold="$(battery_alert_input_battery_empty_threshold)"
-        local alert_sound
-        alert_sound="$(battery_alert_input_sound)"
-
-        sed -e 's/^ALERT_FULL=true/ALERT_FULL='"${alert_full}"'/g' \
-            -e 's/^ALERT_EMPTY=true/ALERT_EMPTY='"${alert_empty}"'/g' \
-            -e 's/^ALERT_EMPTY_TRHESHOLD=[0-9]\+/ALERT_EMPTY_TRHESHOLD='"${alert_empty_threshold}"'/g' \
-            -e 's/^ALERT_SOUND=true/ALERT_SOUND='"${alert_sound}"'/g' \
-            "${INSTALL_DIR}/battery-alert.tpl.sh" | tee "${INSTALL_DIR}/battery-alert.sh" | bash
-
+        cp "${INSTALL_DIR}/battery-alert.sh.tpl" "${INSTALL_DIR}/battery-alert.sh"
         battery_alert_echo >&2 "=> Set Notification config file: ${INSTALL_DIR}/battery-alert.sh"
     }
 
@@ -354,8 +244,6 @@ EOF
             battery_alert_download install_battery_alert_from_git battery_alert_do_install \
             battery_alert_default_install_dir battery_alert_grep battery_alert_reset \
             set_battery_alert_config battery_alert_set_executable_file \
-            battery_alert_input_battery_full battery_alert_input_battery_empty \
-            battery_alert_input_battery_empty_threshold battery_alert_input_sound \
             battery_alert_set_user_service_and_timer enable_user_service_and_timer
     }
 
