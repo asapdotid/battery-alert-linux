@@ -137,18 +137,8 @@
         return
     }
 
-    set_battery_alert_config() {
-        local INSTALL_DIR
-        INSTALL_DIR="$(battery_alert_install_dir)"
+    battery_alert_input_battery_full() {
         local alert_full
-        alert_full=true
-        local alert_empty
-        alert_empty=true
-        local alert_empty_threshold
-        alert_empty_threshold=30
-        local alert_sound
-        alert_sound=true
-
         PS3="Please select enable full battery alert: "
         select opt in Yes No; do
             case $opt in
@@ -165,7 +155,11 @@
                 ;;
             esac
         done
+        echo ${alert_full}
+    }
 
+    battery_alert_input_battery_empty() {
+        local alert_empty
         PS3="Please select enable empty battery alert: "
         select opt in Yes No; do
             case $opt in
@@ -182,7 +176,11 @@
                 ;;
             esac
         done
+        echo ${alert_empty}
+    }
 
+    battery_alert_input_battery_empty_threshold() {
+        local alert_empty_threshold
         PS3="Please select empty battery threshold: "
         select opt in 40 35 30 25 20; do
             case $opt in
@@ -211,8 +209,12 @@
                 ;;
             esac
         done
+        echo ${alert_empty_threshold}
+    }
 
-        PS3="Please select notif alert sound (sound or speak): "
+    battery_alert_input_sound() {
+        local alert_sound
+        PS3="Please select enable sound alert: "
         select opt in Yes No; do
             case $opt in
             Yes)
@@ -228,6 +230,20 @@
                 ;;
             esac
         done
+        echo ${alert_sound}
+    }
+
+    set_battery_alert_config() {
+        local INSTALL_DIR
+        INSTALL_DIR="$(battery_alert_install_dir)"
+        local alert_full
+        alert_full="$(battery_alert_input_battery_full)"
+        local alert_empty
+        alert_empty="$(battery_alert_input_battery_empty)"
+        local alert_empty_threshold
+        alert_empty_threshold="$(battery_alert_input_battery_empty_threshold)"
+        local alert_sound
+        alert_sound="$(battery_alert_input_sound)"
 
         sed -e 's/^ALERT_FULL=true/ALERT_FULL='"${alert_full}"'/g' \
             -e 's/^ALERT_EMPTY=true/ALERT_EMPTY='"${alert_empty}"'/g' \
