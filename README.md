@@ -1,73 +1,51 @@
+<p align="center">
+    <img src="assets/battery-alert-linux.png" width="600" />
+</p>
+
 # Battery Alert for Linux
 
-Low battery warning program for Linux users written in bash
+Full & Low battery alert program for `Linux` users written in bash.
+Desktop notification when battery full or falls below a threshold percentage of your choice.
 
-## Requirements
+Just a friendly reminder to charge your battery, which might get low if you don't give it a boost. We've all been there, where your laptop dies and you have to find a charger, reboot, and restart all your programs. It's a hassle, i know!
 
--   Dunst [doc](https://dunst-project.org/)
--   Paplay [doc](https://linux.die.net/man/1/paplay)
+## Reference:
 
-## Installasi:
+`ArchWiki - Desktop Notification` [doc]([Desktop Notification](https://wiki.archlinux.org/title/Desktop_notifications))
 
-1. Clone this project to:
+## Requirement Package
 
-    ```bash
-    git clone https://github.com/asapdotid/linux-battery-alert.git ~/.config/battery-alert
-    ```
+-   Desktop notifications [wiki](https://wiki.archlinux.org/title/Desktop_notifications)
+-   Notify-send (Libnotify) [wiki](https://man.archlinux.org/man/notify-send.1.en)
+-   Paplay [wiki](https://linux.die.net/man/1/paplay)
+-   eSpeak [wiki](https://espeak.sourceforge.net/)
 
-    or
+## Installing and Updating
 
-    ```bash
-    git clone https://github.com/asapdotid/linux-battery-alert.git ~/.local/bin/battery-alert`
-    ```
+### Install & Update Script
 
-2. Setup autostart `battery-alert`:
+To **install** or **update** battrey alert, you should run the [install script][2]. To do that, you may either download and run the script manually, or use the following `cURL` or `Wget` command:
 
-    - mkdir -p ~/.config/autostart `(if not exist)`
-    - nano ~/.config/autostart/Battery-Alert `(editor: nano/gedit/vim/nvim)`
-
-        ```bash
-        [Desktop Entry]
-        Name=Battery-Alert
-        Comment=Notification for battery alert
-        Exec=~/.config/battery-alert/battery-alert &
-        Type=Application
-        Terminal=false
-        Hidden=false
-        ```
-
-        or
-
-        ```bash
-        [Desktop Entry]
-        Name=Battery-Alert
-        Comment=Notification for battery alert
-        Exec=~/.local/bin/battery-alert/battery-alert &
-        Type=Application
-        Terminal=false
-        Hidden=false
-        ```
-
-3. Restart
-
-## i3wm Setup
-
-Add start `battery-alert` to `i3 config`:
-
-```bash
-exec --no-startup-id ~/.config/battery-alert/battery-alert &
+```sh
+curl -o- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/tags/2.0.0/install.sh | bash
 ```
 
-or
-
-```bash
-exec --no-startup-id ~/.local/bin/battery-alert/battery-alert &
+```sh
+wget -qO- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/tags/2.0.0/install.sh | bash
 ```
 
-## Check Battery Alert running
+#### Additional Notes
+
+-   If the environment variable `$XDG_DATA_HOME` or `$XDG_CONFIG_HOME` is present, it will place the `battrey alert` files there.</sub>
+
+-   The installer can use `git`, `curl`, or `wget` to download `battrey alert`, whichever is available.
+
+## Check Battery Alert service & timer
 
 ```bash
-ps aux | grep battery-alert
+systemctl --user list-timers
 ```
 
 If any issue please contact me [@asapdotid](mailto:asapdotid@gmail.com) 😃
+
+<img class="float-left rounded-2 avatar-user" src="https://avatars.githubusercontent.com/u/34257858?s=96&amp;v=4" width="48" height="48" alt="@asapdotid">
