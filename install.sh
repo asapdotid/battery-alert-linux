@@ -353,8 +353,10 @@ EOF
         unset -f battery_alert_has battery_alert_install_dir battery_alert_latest_version \
             battery_alert_download install_battery_alert_from_git battery_alert_do_install \
             battery_alert_default_install_dir battery_alert_grep battery_alert_reset \
-            set_battery_alert_config battery_alert_set_executable_file battery_alert_set_user_service_and_timer \
-            enable_user_service_and_timer
+            set_battery_alert_config battery_alert_set_executable_file \
+            battery_alert_input_battery_full battery_alert_input_battery_empty \
+            battery_alert_input_battery_empty_threshold battery_alert_input_sound \
+            battery_alert_set_user_service_and_timer enable_user_service_and_timer
     }
 
     [ "_$BATTERY_ALERT_ENV" = "_testing" ] || battery_alert_do_install
