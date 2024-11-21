@@ -27,11 +27,11 @@ Just a friendly reminder to charge your battery, which might get low if you don'
 To **install** or **update** battrey alert, you should run the [install script][2]. To do that, you may either download and run the script manually, or use the following `cURL` or `Wget` command:
 
 ```sh
-curl -o- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/tags/2.0.0/install.sh | bash
+curl -o- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/heads/main/install.sh | bash
 ```
 
 ```sh
-wget -qO- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/tags/2.0.0/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/heads/main/install.sh | bash
 ```
 
 #### Additional Notes
@@ -39,6 +39,30 @@ wget -qO- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/t
 -   If the environment variable `$XDG_DATA_HOME` or `$XDG_CONFIG_HOME` is present, it will place the `battrey alert` files there.</sub>
 
 -   The installer can use `git`, `curl`, or `wget` to download `battrey alert`, whichever is available.
+-
+
+### Custom Variables for Alert
+
+Optional of customize default variables:
+
+| Variable              | Default | Description                                 |
+| --------------------- | ------- | ------------------------------------------- |
+| ALERT_FULL            | `true`  | Alert for full battery (true/false)         |
+| ALERT_EMPTY           | `true`  | Alert for empty battery (true/false)        |
+| ALERT_EMPTY_TRHESHOLD | `30`    | Empty trheshold for empty battery (%)       |
+| ALERT_SOUND           | `true`  | Alert with `sound` or `espeak` (true/false) |
+
+```bash
+#!/usr/bin/env bash
+
+# default variables, optional for customize
+ALERT_FULL=true
+ALERT_EMPTY=true
+ALERT_EMPTY_TRHESHOLD=30
+ALERT_SOUND=true # if true use "sound notif" else "espeak"
+
+...
+```
 
 ## Check Battery Alert service & timer
 

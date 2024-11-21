@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
-# variables
+# Default variables, optional for customization
 ALERT_FULL=true
 ALERT_EMPTY=true
 ALERT_EMPTY_TRHESHOLD=30
 ALERT_SOUND=true
+
+# The configuration below is not customizable by the user
 
 # acpi -b produces output as
 # Battery 0: Discharging, 41%, 01:08:14 remaining
