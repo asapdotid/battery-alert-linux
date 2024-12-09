@@ -2,7 +2,7 @@
 
 { # this ensures the entire script is downloaded #
 
-    if [ ! -x "$(which notify-send)" ] && [ ! -x "$(which paplay)" ] && [ ! -x "$(which espeak)" ]; then
+    if [ ! -x "$(which notify-send)" ] && { [ ! -x "$(which paplay)" ] || [ ! -x "$(which pw-play)" ]; } && [ ! -x "$(which espeak)" ]; then
         # shellcheck disable=SC2016
         asapbattery_echo >&2 'Error: Dependencies not met. Please install notify-send, paplay and espeak.'
         exit 1

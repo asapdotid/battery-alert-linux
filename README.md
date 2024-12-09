@@ -17,7 +17,8 @@ Just a friendly reminder to charge your battery, which might get low if you don'
 
 -   Desktop notifications [wiki](https://wiki.archlinux.org/title/Desktop_notifications)
 -   Notify-send (Libnotify) [wiki](https://man.archlinux.org/man/notify-send.1.en)
--   Paplay [wiki](https://linux.die.net/man/1/paplay)
+-   Paplay - PulseAudio [wiki](https://linux.die.net/man/1/paplay)
+-   Pw-play - Pipewire [docs](https://docs.pipewire.org/page_man_pw-cat_1.html)
 -   eSpeak [wiki](https://espeak.sourceforge.net/)
 
 ## Installing and Updating
