@@ -33,12 +33,12 @@ if [[ "${ALERT_FULL?}" ]]; then
         notify-send -t 180000 -u normal "Battery Full" "Level: ${battery_level}%, please remove the charger"
         if [ "${ALERT_SOUND?}" ]; then
             if command -v paplay >&2; then
-                paplay --volume=52000 /usr/share/sounds/freedesktop/stereo/message-new-instant.oga
+                exec paplay --volume=52000 /usr/share/sounds/freedesktop/stereo/message-new-instant.oga
             else
-                pw-play --volume=0.5 /usr/share/sounds/freedesktop/stereo/message-new-instant.oga
+                exec pw-play --volume=0.5 /usr/share/sounds/freedesktop/stereo/message-new-instant.oga
             fi
         else
-            espeak "Battrey is full, Please Remove the charger" - s 140
+            exec espeak "Battrey is full, Please Remove the charger" - s 140
         fi
     fi
 fi
@@ -51,12 +51,12 @@ if [[ "${ALERT_EMPTY?}" ]]; then
         notify-send -t 180000 -u critical "Battery Low" "Level: ${battery_level}%, please connect the charger"
         if [ "${ALERT_SOUND?}" ]; then
             if command -v paplay >&2; then
-                paplay --volume=52000 /usr/share/sounds/freedesktop/stereo/suspend-error.oga
+                exec paplay --volume=52000 /usr/share/sounds/freedesktop/stereo/suspend-error.oga
             else
-                pw-play --volume=0.5 /usr/share/sounds/freedesktop/stereo/suspend-error.oga
+                exec pw-play --volume=0.5 /usr/share/sounds/freedesktop/stereo/suspend-error.oga
             fi
         else
-            espeak "Battrey is low, Please connect the charger" - s 140
+            exec espeak "Battrey is low, Please connect the charger" - s 140
         fi
     fi
 fi
