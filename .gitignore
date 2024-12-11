@@ -1,3 +1,4 @@
 .env
 test*
-battery-alert.sh
+default.conf
+
