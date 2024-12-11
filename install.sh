@@ -55,7 +55,7 @@
         fi
     }
 
-    install_battery_alert_from_git() {
+    battery_alert_install_from_git() {
         local INSTALL_DIR
         INSTALL_DIR="$(battery_alert_install_dir)"
         local BATTERY_ALERT_VERSION
@@ -137,11 +137,11 @@
         return
     }
 
-    set_battery_alert_config() {
+    battery_alert_set_config() {
         local INSTALL_DIR
         INSTALL_DIR="$(battery_alert_install_dir)"
-        cp "${INSTALL_DIR}/battery-alert.sh.tpl" "${INSTALL_DIR}/battery-alert.sh"
-        battery_alert_echo >&2 "=> Set Notification config file: ${INSTALL_DIR}/battery-alert.sh"
+        cp "${INSTALL_DIR}/default.conf.tpl" "${INSTALL_DIR}/default.conf"
+        battery_alert_echo >&2 "=> Set Notification config file: ${INSTALL_DIR}/default.conf"
     }
 
     battery_alert_set_executable_file() {
@@ -165,6 +165,7 @@ Description=Desktop alert warning of low/full battery status
 
 [Service]
 Type=oneshot
+EnvironmentFile=${INSTALL_DIR}/default.conf
 ExecStart=${INSTALL_DIR}/battery-alert.sh
 
 [Install]
@@ -192,7 +193,7 @@ EOF
         battery_alert_echo >&2 "=> Set user timer: ${SYSTEM_USER_DIR}/battery-alert.timer"
     }
 
-    enable_user_service_and_timer() {
+    battery_alert_enable_user_timer() {
         local INSTALL_DIR
         INSTALL_DIR="$(battery_alert_install_dir)"
         local SYSTEMD_USER_DIR
@@ -225,15 +226,12 @@ EOF
             battery_alert_echo >&2 "You need git to install linux-battery-alert."
             exit 1
         fi
-        install_battery_alert_from_git
-        battery_alert_echo
+        battery_alert_install_from_git
         battery_alert_echo "=> Set battery alert config"
-        battery_alert_echo
-        set_battery_alert_config
+        battery_alert_set_config
         battery_alert_set_executable_file
         battery_alert_set_user_service_and_timer
-        enable_user_service_and_timer
-        battery_alert_echo
+        battery_alert_enable_user_timer
         battery_alert_reset
         battery_alert_echo "=> Done!"
         battery_alert_echo "=> Checks your battery alert timer and service (systemctl --user list-timers)"
@@ -241,10 +239,10 @@ EOF
 
     battery_alert_reset() {
         unset -f battery_alert_has battery_alert_install_dir battery_alert_latest_version \
-            battery_alert_download install_battery_alert_from_git battery_alert_do_install \
+            battery_alert_download battery_alert_install_from_git battery_alert_do_install \
             battery_alert_default_install_dir battery_alert_grep battery_alert_reset \
-            set_battery_alert_config battery_alert_set_executable_file \
-            battery_alert_set_user_service_and_timer enable_user_service_and_timer
+            battery_alert_set_config battery_alert_set_executable_file \
+            battery_alert_set_user_service_and_timer battery_alert_enable_user_timer
     }
 
     [ "_$BATTERY_ALERT_ENV" = "_testing" ] || battery_alert_do_install
