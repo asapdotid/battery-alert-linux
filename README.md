@@ -48,28 +48,32 @@ Optional of customize default variables:
 
 | Variable              | Default | Description                                 |
 | --------------------- | ------- | ------------------------------------------- |
+| ALERT_SOUND           | `true`  | Alert with `sound` or `espeak` (true/false) |
 | ALERT_FULL            | `true`  | Alert for full battery (true/false)         |
 | ALERT_EMPTY           | `true`  | Alert for empty battery (true/false)        |
 | ALERT_EMPTY_TRHESHOLD | `30`    | Empty trheshold for empty battery (%)       |
-| ALERT_SOUND           | `true`  | Alert with `sound` or `espeak` (true/false) |
+
+Default config `/home/$USER/.local/share/battery-alert/default.conf`
 
 ```bash
-#!/usr/bin/env bash
-
 # default variables, optional for customize
+ALERT_SOUND=true
 ALERT_FULL=true
 ALERT_EMPTY=true
 ALERT_EMPTY_TRHESHOLD=30
-ALERT_SOUND=true # if true use "sound notif" else "espeak"
-
-...
 ```
 
 ## Check Battery Alert service & timer
 
+> A timer will run the service every 2 minutes
+
 ```bash
 systemctl --user list-timers
 ```
+
+## To Do
+
+[ ] Custom set timer
 
 If any issue please contact me [@asapdotid](mailto:asapdotid@gmail.com) 😃
 
