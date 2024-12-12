@@ -183,8 +183,8 @@ Requires=battery-alert.service
 [Timer]
 # Start 1 minute after boot...
 OnBootSec=1m
-# ...and again every 3 minutes after 'battery-battery.service' runs
-OnUnitActiveSec=3m
+# ...and again every 2 minutes after 'battery-battery.service' runs
+OnUnitActiveSec=2m
 
 [Install]
 WantedBy=timers.target
