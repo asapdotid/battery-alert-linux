@@ -2,9 +2,15 @@
 
 { # this ensures the entire script is downloaded #
 
+    if [ ! -x "$(which acpi)" ]; then
+        # shellcheck disable=SC2016
+        asapbattery_echo >&2 'Error: Dependencies not met. Please install ACPI.'
+        exit 1
+    fi
+
     if [ ! -x "$(which notify-send)" ] && { [ ! -x "$(which paplay)" ] || [ ! -x "$(which pw-play)" ]; } && [ ! -x "$(which espeak)" ]; then
         # shellcheck disable=SC2016
-        asapbattery_echo >&2 'Error: Dependencies not met. Please install notify-send, paplay and espeak.'
+        asapbattery_echo >&2 'Error: Dependencies not met. Please install ACPI, notify-send, paplay and espeak.'
         exit 1
     fi
 
@@ -21,7 +27,13 @@
     }
 
     battery_alert_default_install_dir() {
-        [ -z "${XDG_DATA_HOME-}" ] && printf %s "${XDG_CONFIG_HOME}/battery-alert" || printf %s "${XDG_DATA_HOME}/battery-alert"
+        if [ -z "${XDG_CONFIG_HOME-}" ]; then
+            printf %s "${XDG_CONFIG_HOME}/battery-alert"
+        elif [ -z "${XDG_DATA_HOME-}" ]; then
+            printf %s "${XDG_DATA_HOME}/battery-alert"
+        else
+            printf %s "${HOME}/.local/share/battery-alert"
+        fi
     }
 
     battery_alert_install_dir() {
@@ -155,7 +167,7 @@
         local INSTALL_DIR
         INSTALL_DIR="$(battery_alert_install_dir)"
         local SYSTEM_USER_DIR
-        SYSTEM_USER_DIR="${XDG_CONFIG_HOME}/systemd/user"
+        [ -z "${XDG_CONFIG_HOME-}" ] && SYSTEM_USER_DIR="${XDG_CONFIG_HOME}/systemd/user" || SYSTEM_USER_DIR="${HOME}/.config/systemd/user"
         [ -d "$SYSTEM_USER_DIR" ] || mkdir -p "$SYSTEM_USER_DIR"
 
         # Set user service
