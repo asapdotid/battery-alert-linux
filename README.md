@@ -69,7 +69,7 @@ ALERT_EMPTY_TRHESHOLD=30
 > A timer will run the service every 2 minutes
 
 ```bash
-systemctl --user list-timers
+systemctl --user list-timers --all
 ```
 
 ## To Do
