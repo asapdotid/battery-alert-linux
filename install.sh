@@ -15,7 +15,7 @@
     fi
 
     battery_alert_has() {
-        type "$1" >/dev/null 2>&1
+        command type "$1" >/dev/null 2>&1
     }
 
     battery_alert_echo() {
@@ -27,20 +27,18 @@
     }
 
     battery_alert_default_install_dir() {
-        if [ -z "${XDG_CONFIG_HOME-}" ]; then
-            printf %s "${XDG_CONFIG_HOME}/battery-alert"
-        elif [ -z "${XDG_DATA_HOME-}" ]; then
-            printf %s "${XDG_DATA_HOME}/battery-alert"
+        if [ -n "${XDG_DATA_HOME}" ]; then
+            command printf %s "${XDG_DATA_HOME}/battery-alert"
         else
-            printf %s "${HOME}/.local/share/battery-alert"
+            command printf %s "${HOME}/.local/share/battery-alert"
         fi
     }
 
-    battery_alert_install_dir() {
-        if [ -n "$BATTERY_ALERT_DIR" ]; then
-            printf %s "${BATTERY_ALERT_DIR}"
+    battery_alert_default_service_dir() {
+        if [ -n "${XDG_CONFIG_HOME}" ]; then
+            command printf %s "${XDG_CONFIG_HOME}/systemd/user"
         else
-            battery_alert_default_install_dir
+            command printf %s "${HOME}/.config/systemd/user"
         fi
     }
 
@@ -50,7 +48,7 @@
 
     battery_alert_download() {
         if battery_alert_has "curl"; then
-            curl --fail --compressed -q "$@"
+            command curl --fail --compressed -q "$@"
         elif battery_alert_has "wget"; then
             # Emulate curl with wget
             ARGS=$(battery_alert_echo "$@" | command sed -e 's/--progress-bar /--progress=bar /' \
@@ -69,12 +67,12 @@
 
     battery_alert_install_from_git() {
         local INSTALL_DIR
-        INSTALL_DIR="$(battery_alert_install_dir)"
+        INSTALL_DIR="$(battery_alert_default_install_dir)"
         local BATTERY_ALERT_VERSION
         BATTERY_ALERT_VERSION="${BATTERY_ALERT_INSTALL_VERSION:-$(battery_alert_latest_version)}"
         local BATTERY_ALERT_SOURCE_URL
         BATTERY_ALERT_SOURCE_URL="https://github.com/asapdotid/battery-alert-linux.git"
-        if [ -n "${BATTERY_ALERT_VERSION:-}" ]; then
+        if [ -n "${BATTERY_ALERT_VERSION}" ]; then
             # Check if version is an existing ref
             if command git ls-remote "$BATTERY_ALERT_SOURCE_URL" "$BATTERY_ALERT_VERSION" | battery_alert_grep -q "$BATTERY_ALERT_VERSION"; then
                 :
@@ -95,7 +93,7 @@
             fetch_error="Failed to fetch origin with $BATTERY_ALERT_VERSION. Please report this!"
             battery_alert_echo "=> Downloading battey alert from git to '$INSTALL_DIR'"
             command printf '\r=> '
-            mkdir -p "${INSTALL_DIR}"
+            command mkdir -p "${INSTALL_DIR}"
             if [ "$(ls -A "${INSTALL_DIR}")" ]; then
                 # Initializing repo
                 command git init "${INSTALL_DIR}" || {
@@ -151,27 +149,27 @@
 
     battery_alert_set_config() {
         local INSTALL_DIR
-        INSTALL_DIR="$(battery_alert_install_dir)"
-        cp "${INSTALL_DIR}/default.conf.tpl" "${INSTALL_DIR}/default.conf"
+        INSTALL_DIR="$(battery_alert_default_install_dir)"
+        command cp "${INSTALL_DIR}/default.conf.tpl" "${INSTALL_DIR}/default.conf"
         battery_alert_echo >&2 "=> Set Notification config file: ${INSTALL_DIR}/default.conf"
     }
 
     battery_alert_set_executable_file() {
         local INSTALL_DIR
-        INSTALL_DIR="$(battery_alert_install_dir)"
-        chmod +x "${INSTALL_DIR}/battery-alert.sh"
+        INSTALL_DIR="$(battery_alert_default_install_dir)"
+        command chmod +x "${INSTALL_DIR}/battery-alert.sh"
         battery_alert_echo >&2 "=> Set executable file: ${INSTALL_DIR}/battery-alert.sh"
     }
 
     battery_alert_set_user_service_and_timer() {
         local INSTALL_DIR
-        INSTALL_DIR="$(battery_alert_install_dir)"
-        local SYSTEM_USER_DIR
-        [ -z "${XDG_CONFIG_HOME-}" ] && SYSTEM_USER_DIR="${XDG_CONFIG_HOME}/systemd/user" || SYSTEM_USER_DIR="${HOME}/.config/systemd/user"
-        [ -d "$SYSTEM_USER_DIR" ] || mkdir -p "$SYSTEM_USER_DIR"
+        INSTALL_DIR="$(battery_alert_default_install_dir)"
+        local SYSTEMD_USER_DIR
+        SYSTEMD_USER_DIR="$(battery_alert_default_service_dir)"
+        [ -d "$SYSTEMD_USER_DIR" ] || command mkdir -p "$SYSTEMD_USER_DIR"
 
         # Set user service
-        cat <<EOF >"${SYSTEM_USER_DIR}/battery-alert.service"
+        command cat <<EOF >"${SYSTEMD_USER_DIR}/battery-alert.service"
 Unit]
 Description=Desktop alert warning of low/full battery status
 
@@ -183,10 +181,10 @@ ExecStart=${INSTALL_DIR}/battery-alert.sh
 [Install]
 WantedBy=graphical.target
 EOF
-        battery_alert_echo >&2 "=> Set user service: ${SYSTEM_USER_DIR}/battery-alert.service"
+        battery_alert_echo >&2 "=> Set user service: ${SYSTEMD_USER_DIR}/battery-alert.service"
 
         # Set timer
-        cat <<'EOF' >"${SYSTEM_USER_DIR}/battery-alert.timer"
+        command cat <<'EOF' >"${SYSTEMD_USER_DIR}/battery-alert.timer"
 [Unit]
 Description=Check battery status every few minutes to warn the user in case of low/full battery
 Requires=battery-alert.service
@@ -202,38 +200,24 @@ OnUnitActiveSec=2m
 WantedBy=timers.target
 EOF
 
-        battery_alert_echo >&2 "=> Set user timer: ${SYSTEM_USER_DIR}/battery-alert.timer"
+        battery_alert_echo >&2 "=> Set user timer: ${SYSTEMD_USER_DIR}/battery-alert.timer"
     }
 
     battery_alert_enable_user_timer() {
         local INSTALL_DIR
-        INSTALL_DIR="$(battery_alert_install_dir)"
+        INSTALL_DIR="$(battery_alert_default_install_dir)"
         local SYSTEMD_USER_DIR
-        SYSTEMD_USER_DIR="${XDG_CONFIG_HOME}/systemd/user"
-        if ! [ -f "${INSTALL_DIR}/battery-alert.sh" ] || ! [ -f "${SYSTEMD_USER_DIR}/battery-alert.service" ] || ! [ -f "${SYSTEMD_USER_DIR}/battery-alert.timer" ]; then
+        SYSTEMD_USER_DIR="$(battery_alert_default_service_dir)"
+        if [ ! -f "$INSTALL_DIR/default.conf" ] && [ ! -f "$INSTALL_DIR/battery-alert.sh" ] && [ ! -f "$SYSTEMD_USER_DIR/battery-alert.service" ] && [ ! -f "$SYSTEMD_USER_DIR/battery-alert.timer" ]; then
             battery_alert_echo >&2 "You need to install battery-alert first."
             exit 1
         fi
-        systemctl --user daemon-reload
-        systemctl --user enable --now battery-alert.timer
+        command systemctl --user daemon-reload
+        command systemctl --user enable --now battery-alert.timer
         battery_alert_echo >&2 "=> Enable user service and timer"
     }
 
     battery_alert_do_install() {
-        if [ -n "${BATTERY_ALERT_DIR-}" ] && ! [ -d "${BATTERY_ALERT_DIR}" ]; then
-            if [ -e "${BATTERY_ALERT_DIR}" ]; then
-                battery_alert_echo >&2 "File \"${BATTERY_ALERT_DIR}\" has the same name as installation directory."
-                exit 1
-            fi
-
-            if [ "${BATTERY_ALERT_DIR}" = "$(battery_alert_default_install_dir)" ]; then
-                mkdir "${BATTERY_ALERT_DIR}"
-            else
-                battery_alert_echo >&2 "You have \$BATTERY_ALERT_DIR set to \"${BATTERY_ALERT_DIR}\", but that directory does not exist."
-                exit 1
-            fi
-        fi
-
         if ! battery_alert_has git; then
             battery_alert_echo >&2 "You need git to install linux-battery-alert."
             exit 1
@@ -246,11 +230,11 @@ EOF
         battery_alert_enable_user_timer
         battery_alert_reset
         battery_alert_echo "=> Done!"
-        battery_alert_echo "=> Checks your battery alert timer and service (systemctl --user list-timers)"
+        battery_alert_echo "=> Checks your battery alert timer and service (systemctl --user list-timers --all)"
     }
 
     battery_alert_reset() {
-        unset -f battery_alert_has battery_alert_install_dir battery_alert_latest_version \
+        command unset -f battery_alert_has battery_alert_default_install_dir battery_alert_default_service_dir battery_alert_latest_version \
             battery_alert_download battery_alert_install_from_git battery_alert_do_install \
             battery_alert_default_install_dir battery_alert_grep battery_alert_reset \
             battery_alert_set_config battery_alert_set_executable_file \
