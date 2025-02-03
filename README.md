@@ -11,7 +11,7 @@ Just a friendly reminder to charge your battery, which might get low if you don'
 
 ## Reference:
 
-`ArchWiki - Desktop Notification` [doc]([Desktop Notification](https://wiki.archlinux.org/title/Desktop_notifications))
+`ArchWiki - Desktop Notification` [Desktop Notification](https://wiki.archlinux.org/title/Desktop_notifications)
 
 ## Requirement Package
 
@@ -41,7 +41,6 @@ wget -qO- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/h
 -   If the environment variable `$XDG_DATA_HOME` or `$XDG_CONFIG_HOME` is present, it will place the `battrey alert` files there.</sub>
 
 -   The installer can use `git`, `curl`, or `wget` to download `battrey alert`, whichever is available.
--
 
 ### Custom Variables for Alert
 
