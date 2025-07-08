@@ -4,13 +4,13 @@
 
     if [ ! -x "$(which acpi)" ]; then
         # shellcheck disable=SC2016
-        asapbattery_echo >&2 'Error: Dependencies not met. Please install ACPI.'
+        battery_alert_echo >&2 'Error: Dependencies not met. Please install ACPI.'
         exit 1
     fi
 
     if [ ! -x "$(which notify-send)" ] && { [ ! -x "$(which paplay)" ] || [ ! -x "$(which pw-play)" ]; } && [ ! -x "$(which espeak)" ]; then
         # shellcheck disable=SC2016
-        asapbattery_echo >&2 'Error: Dependencies not met. Please install ACPI, notify-send, paplay and espeak.'
+        battery_alert_echo >&2 'Error: Dependencies not met. Please install ACPI, notify-send, paplay and espeak.'
         exit 1
     fi
 
