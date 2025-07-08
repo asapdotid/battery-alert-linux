@@ -2,6 +2,10 @@
 
 { # this ensures the entire script is downloaded #
 
+    battery_alert_echo() {
+        command printf %s\\n "$*" 2>/dev/null
+    }
+
     if [ ! -x "$(which acpi)" ]; then
         # shellcheck disable=SC2016
         battery_alert_echo >&2 'Error: Dependencies not met. Please install ACPI.'
@@ -16,10 +20,6 @@
 
     battery_alert_has() {
         command type "$1" >/dev/null 2>&1
-    }
-
-    battery_alert_echo() {
-        command printf %s\\n "$*" 2>/dev/null
     }
 
     battery_alert_grep() {
@@ -235,7 +235,7 @@ EOF
 
     battery_alert_reset() {
         command unset -f battery_alert_has battery_alert_default_install_dir battery_alert_default_service_dir battery_alert_latest_version \
-            battery_alert_download battery_alert_install_from_git battery_alert_do_install \
+            battery_alert_download battery_alert_install_from_git battery_alert_do_install battery_alert_echo \
             battery_alert_default_install_dir battery_alert_grep battery_alert_reset \
             battery_alert_set_config battery_alert_set_executable_file \
             battery_alert_set_user_service_and_timer battery_alert_enable_user_timer
