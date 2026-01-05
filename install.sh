@@ -6,15 +6,25 @@
         command printf %s\\n "$*" 2>/dev/null
     }
 
-    if [ ! -x "$(which acpi)" ]; then
-        # shellcheck disable=SC2016
-        battery_alert_echo >&2 'Error: Dependencies not met. Please install ACPI.'
+    has_battery_monitor() {
+        command -v upower >/dev/null 2>&1 || command -v acpi >/dev/null 2>&1
+    }
+
+    has_player() {
+        command -v paplay >/dev/null 2>&1 || command -v pw-play >/dev/null 2>&1
+    }
+
+    has_notify() {
+        command -v notify-send >/dev/null 2>&1 && command -v espeak >/dev/null 2>&1
+    }
+
+    if ! has_battery_monitor; then
+        battery_alert_echo >&2 'Error: Dependencies not met. Please install ACPI and/or upower.'
         exit 1
     fi
 
-    if [ ! -x "$(which notify-send)" ] && { [ ! -x "$(which paplay)" ] || [ ! -x "$(which pw-play)" ]; } && [ ! -x "$(which espeak)" ]; then
-        # shellcheck disable=SC2016
-        battery_alert_echo >&2 'Error: Dependencies not met. Please install ACPI, notify-send, paplay and espeak.'
+    if ! has_notify && ! has_player; then
+        battery_alert_echo >&2 'Error: Dependencies not met. Please install notify-send, espeak and (paplay or pw-play).'
         exit 1
     fi
 
@@ -228,17 +238,17 @@ EOF
         battery_alert_set_executable_file
         battery_alert_set_user_service_and_timer
         battery_alert_enable_user_timer
-        battery_alert_reset
         battery_alert_echo "=> Done!"
         battery_alert_echo "=> Checks your battery alert timer and service (systemctl --user list-timers --all)"
+        battery_alert_reset
     }
 
     battery_alert_reset() {
         command unset -f battery_alert_has battery_alert_default_install_dir battery_alert_default_service_dir battery_alert_latest_version \
-            battery_alert_download battery_alert_install_from_git battery_alert_do_install battery_alert_echo \
+            battery_alert_download battery_alert_install_from_git battery_alert_do_install \
             battery_alert_default_install_dir battery_alert_grep battery_alert_reset \
             battery_alert_set_config battery_alert_set_executable_file \
-            battery_alert_set_user_service_and_timer battery_alert_enable_user_timer
+            battery_alert_set_user_service_and_timer battery_alert_enable_user_timer battery_alert_echo
     }
 
     [ "_$BATTERY_ALERT_ENV" = "_testing" ] || battery_alert_do_install

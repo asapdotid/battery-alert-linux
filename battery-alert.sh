@@ -9,22 +9,22 @@
 # The configuration below is not customizable by the user
 
 if command -v upower &> /dev/null; then
-    # acpi -b produces output as
-    # Battery 0: Discharging, 41%, 01:08:14 remaining
-    # To get the battery percentage only we'll cut the
-    # second value which ends at ", ". So we get 41%
+    # upower -i produces output as
+    # Show information about the given device
+    # Enumerate the object paths of all devices on the system
+    # So we get percentage: 41%
     # Now we'll replace the % sign by "", so 41% will
     # be changed to 41 now.
     battery_level=$(upower -i "$(upower -e battery | head -n 1)" | grep percentage | awk '{print $2}' | sed 's/%//')
 
-    # If the charger is plugged in, acpi shows "charging"
+    # If the charger is plugged in, upower shows "charging"
     # and if it's not plugged in, it shows "discharging".
-    # if acpi -b shows charging, "grep -c" will return 1
-    # else it will return 0
+    # if upower -i shows charging, "grep state" will return "charging"
+    # else it will return "discharging"
     ac_power=$(upower -i "$(upower -e battery | head -n 1)" | grep state | awk '{print $2}')
 
     # Checks if ac_power is ON and battery is full
-    battery_full=$(acpi -b | grep -c "Full")
+    battery_full=$(ac_power | grep -c "fully-charged")
 elif command -v acpi &> /dev/null; then
     # acpi -b produces output as
     # Battery 0: Discharging, 41%, 01:08:14 remaining
@@ -55,11 +55,13 @@ if [[ "${ALERT_FULL?}" ]]; then
         if [ "${ALERT_SOUND?}" ]; then
             if command -v paplay >&2; then
                 exec paplay --volume=32000 /usr/share/sounds/freedesktop/stereo/message-new-instant.oga
-            else
+            elif command -v pw-play >&2; then
                 exec pw-play --volume=0.3 /usr/share/sounds/freedesktop/stereo/message-new-instant.oga
             fi
         else
-            exec espeak "Battrey is full, Please Remove the charger" - s 140
+            if command -v espeak >&2; then
+                exec espeak "Battrey is full, Please Remove the charger" - s 140
+            fi
         fi
     fi
 fi
@@ -73,11 +75,13 @@ if [[ "${ALERT_EMPTY?}" ]]; then
         if [ "${ALERT_SOUND?}" ]; then
             if command -v paplay >&2; then
                 exec paplay --volume=32000 /usr/share/sounds/freedesktop/stereo/suspend-error.oga
-            else
+            elif command -v pw-play >&2; then
                 exec pw-play --volume=0.3 /usr/share/sounds/freedesktop/stereo/suspend-error.oga
             fi
         else
-            exec espeak "Battrey is low, Please connect the charger" - s 140
+            if command -v espeak >&2; then
+                exec espeak "Battrey is low, Please connect the charger" - s 140
+            fi
         fi
     fi
 fi
