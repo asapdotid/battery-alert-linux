@@ -15,6 +15,7 @@ Just a friendly reminder to charge your battery, which might get low if you don'
 
 ## Requirement Package
 
+-   Upower [wiki](https://upower.freedesktop.org/docs/)
 -   ACPI [wiki](https://en.wikipedia.org/wiki/ACPI)
 -   Desktop notifications [wiki](https://wiki.archlinux.org/title/Desktop_notifications)
 -   Notify-send (Libnotify) [wiki](https://man.archlinux.org/man/notify-send.1.en)
