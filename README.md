@@ -47,13 +47,12 @@ wget -qO- https://raw.githubusercontent.com/asapdotid/battery-alert-linux/refs/h
 
 Optional of customize default variables:
 
-| Variable              | Default | Description                                         |
-| --------------------- | ------- | --------------------------------------------------- |
-| ALERT_SOUND           | `true`  | Alert with `sound` or `espeak` (true/false)         |
-| ALERT_FULL            | `true`  | Alert for full battery (true/false)                 |
-| ALERT_EMPTY           | `true`  | Alert for empty battery (true/false)                |
-| ALERT_EMPTY_TRHESHOLD | `30`    | Empty trheshold for empty battery (%)               |
-| ALERT_BATTERY         | `0`     | Laptop usning the battery (check command `acpi -b`) |
+| Variable              | Default | Description                                 |
+| --------------------- | ------- | ------------------------------------------- |
+| ALERT_SOUND           | `true`  | Alert with `sound` or `espeak` (true/false) |
+| ALERT_FULL            | `true`  | Alert for full battery (true/false)         |
+| ALERT_EMPTY           | `true`  | Alert for empty battery (true/false)        |
+| ALERT_EMPTY_TRHESHOLD | `30`    | Empty trheshold for empty battery (%)       |
 
 Default config `/home/$USER/.local/share/battery-alert/default.conf`
 
@@ -63,7 +62,6 @@ ALERT_SOUND=true
 ALERT_FULL=true
 ALERT_EMPTY=true
 ALERT_EMPTY_TRHESHOLD=30
-ALERT_BATTERY=0
 ```
 
 Capture from my 💻
@@ -71,10 +69,6 @@ Capture from my 💻
 <p align="left">
     <img src="assets/manjaro-i3-thinkbook-14.png" width="400" />
 </p>
-
-So my config set `ALERT_BATTERY=1`
-
-> Change config base from your battery `acpi -b` on `~/.local/share/battery-alert/default.conf`
 
 ## Check Battery Alert service & timer
 
